@@ -8,6 +8,16 @@
    like pacman and mario. Optimized to run with resolution 320x240,
    with is perfect for the digital photo frame DF3120. For more 
    information on DF3120, please use google. 
+   
+   the source code is free, you can use it however you want.
+   but proceed at your own risk, I offer absolutely no warranty.
+   I am not responsible if this program burns down your house
+   or something, sorry :-).
+   
+   the fonts used in this program are found under linux source
+   directory linux/drivers/video/console/. you can download these
+   fonts online, the copyright of these fonts belong to the
+   original author. 
 ________________________________________________________________
 
 >> Table of contents
@@ -37,10 +47,12 @@ ________________________________________________________________
    // custom animation files
    pacman_32x32.hpp
    super_mario_16x16.hpp 
-
 ________________________________________________________________
 
 >> Compile notes
+   
+   By default this program is mean to run on small embedded devices,
+   not on a normal computer, therefore cross-compile is usually required. 
    
    If you have already build minifs toolchain for DF3120, then change
    the compiler in makefile to arm-v4t-linux-uclibcgnueabi-g++, then
