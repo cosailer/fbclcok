@@ -17,7 +17,6 @@
  */
 
 #include <iostream>
-
 #include "fbdevice.hpp"
 
 using namespace std;
@@ -25,26 +24,25 @@ using namespace std;
 fbdevice::~fbdevice()
 {
     //clean up
-    cout << "good bye !" << endl;
+    cout << ">> good bye !" << endl;
     munmap(device_p, finfo.smem_len);
     close(device);
 }
 
 void fbdevice::version()
 {
-    cout << "\nDF3120 FrameBuffer Clock Utility v1.1" << endl;
-    cout << "by CoSailer    10.03.2014" << endl;
-    cout << "Usage: clock [mode] [select]" << endl;
-    cout << "       mode : 1  use 8x8 font to show time" << endl;
-    cout << "       mode : 2  use 8x16 font to show time\n" << endl;
-    cout << "       select : 1  use pacman animation" << endl;
-    cout << "       select : 2  use super mario animation\n" << endl;
+    cout << "\n>> DF3120 FrameBuffer Clock Utility v1.1" << endl;
+    cout << ">> by CoSailer    10.03.2014" << endl;
+    cout << ">> Usage: clock [mode] [select]" << endl;
+    cout << "          mode : 1  use 8x8 font to show time" << endl;
+    cout << "          mode : 2  use 8x16 font to show time\n" << endl;
+    cout << "          select : 1  use pacman animation" << endl;
+    cout << "          select : 2  use super mario animation\n" << endl;
 }
 
 // initilize frame buffer
 void fbdevice::init()
 {
-    
     device = open("/dev/fb0", O_RDWR);
     
     if (!device)
@@ -119,37 +117,25 @@ void fbdevice::set_colour_by_code(const uint8_t *colour_index)
 {
     // set the pixel colour for each dot
     if ( *colour_index == '.' )  {  set_colour(0, 0, 0);  }
-    
     else if ( *colour_index == 'W' ){  set_colour(255, 255, 255);  }
-    
     else if ( *colour_index == 'R' ){  set_colour(255, 0, 0);  }
-    
     else if ( *colour_index == 'B' ){  set_colour(0, 0, 255);  }
-    
     else if ( *colour_index == 'b' ){  set_colour(150, 75, 0);  }
-    
     else if ( *colour_index == 'O' ){  set_colour(255, 125, 0);  }
-    
     else if ( *colour_index == 'G' ){  set_colour(0, 255, 0);  }
-    
     else if ( *colour_index == 'g' ){  set_colour(100, 100, 100);  }
-    
     else if ( *colour_index == 'Y' ){  set_colour(255, 255, 0);  }
-    
     else if ( *colour_index == 'p' ){  set_colour(255, 180, 200);  }
-    
 }
 
 // drwa pixel on screen with tmp colour
 void fbdevice::draw_pixel(uint16_t x, uint16_t y)
 {
     // calculate the pixel's byte offset inside the buffer
-    
     if( x > 320) {  x -= 320; }
     if( y > 240) {  y -= 240; }
     
     uint32_t pix_offset = x + y * vinfo.xres;
-    
     device_p[pix_offset] = colour;
 }
 
@@ -157,7 +143,7 @@ void fbdevice::draw_pixel(uint16_t x, uint16_t y)
 void fbdevice::fill_colour(uint8_t r, uint8_t g, uint8_t b)
 {
     set_colour(r, g, b);
-
+    
     for (uint16_t y = 0; y < vinfo.yres; ++y)
     {
         for (uint16_t x = 0; x < vinfo.xres; ++x)
@@ -170,7 +156,6 @@ void fbdevice::fill_colour(uint8_t r, uint8_t g, uint8_t b)
 // fill whole screen with random colour
 void fbdevice::fill_random_colour()
 {
-
     for (uint16_t y = 0; y < vinfo.yres; ++y)
     {
         for (uint16_t x = 0; x < vinfo.xres; ++x)
@@ -194,9 +179,7 @@ string fbdevice::to_string( uint32_t tmp )
 // mode can be 8 or 16, which decides the height of the font
 void fbdevice::display_font(uint8_t *chara, uint8_t size, uint8_t mode)
 {
-    
     uint16_t width = 8 * size;
-    
     uint16_t* buffer_ptr = (uint16_t*)device_p;
     
     // Move screen ptr to the current index point
@@ -204,12 +187,10 @@ void fbdevice::display_font(uint8_t *chara, uint8_t size, uint8_t mode)
     
     for( uint8_t i = 0; i < mode; ++i )
     {
-    
         for(uint8_t k = 0; k < size; ++k)
         {
           for( uint8_t j = 0; j < 8; ++j )
           {
-              
               for(uint8_t l = 0; l < size; ++l)
               {
                 if(  chara[i] & (0x80>>j)  )  {  *buffer_ptr = colour; }
@@ -218,12 +199,10 @@ void fbdevice::display_font(uint8_t *chara, uint8_t size, uint8_t mode)
                 
                 buffer_ptr++;
               }
-          
           }
           
           buffer_ptr -= width;
           buffer_ptr += vinfo.xres;  // onto the next line
-        
         }
     }
     
@@ -248,7 +227,6 @@ void fbdevice::display_str(string tmp, uint8_t size, uint8_t mode)
 {
     uint64_t offset = 0;
     uint8_t *font_index;
-    
     uint8_t scal = 1;
     
     // if mode = 8, max scal = 30; if mode = 16, max scal = 15
@@ -256,7 +234,6 @@ void fbdevice::display_str(string tmp, uint8_t size, uint8_t mode)
     {
         cout << "scal out of range, using default 1" << endl;
     }
-    
     else { scal = size; }
     
     for (uint32_t i = 0; i < tmp.length(); ++i)
@@ -265,13 +242,10 @@ void fbdevice::display_str(string tmp, uint8_t size, uint8_t mode)
         offset = tmp.at(i) * mode;
         
         if( mode == 8 )  {  font_index = (uint8_t *)fontdata_8x8 + offset; }
-        
         else if( mode == 16 ) { font_index = (uint8_t *)fontdata_8x16 + offset; }
-        
         else { cout << "Wrong text mode !" << endl; return ;}
         
         display_font( font_index, scal, mode);
-    
     }
 }
     
@@ -280,11 +254,8 @@ void fbdevice::display_str(string tmp, uint8_t size, uint8_t mode)
 void fbdevice::draw_pacman(uint8_t code, uint8_t size)
 {
     const uint8_t* font_ptr;
-    
     font_ptr = pacman + code * PACMAN_SIZE * PACMAN_SIZE;
-    
     uint16_t width = PACMAN_SIZE * size;
-    
     uint16_t* buffer_ptr = (uint16_t*)device_p;
     
     // Move screen ptr to top-left of character
@@ -292,15 +263,12 @@ void fbdevice::draw_pacman(uint8_t code, uint8_t size)
     
     for (uint8_t y = 0; y < PACMAN_SIZE; ++y)
     {
-     
         //print multiple times of the same line of pacman
         for(uint8_t k = 0; k < size; ++k)
         {
-        
           //print one line of pacman
           for (uint8_t x = 0; x < PACMAN_SIZE; ++x)
           {
-           
               for(uint8_t l = 0; l < size; ++l)
               {
                   set_colour_by_code(font_ptr); 
@@ -319,9 +287,7 @@ void fbdevice::draw_pacman(uint8_t code, uint8_t size)
           // move to the next line for drawing
           buffer_ptr -= width;
           buffer_ptr += vinfo.xres;
-        
         }
-
     }
 }
 
@@ -329,11 +295,8 @@ void fbdevice::draw_pacman(uint8_t code, uint8_t size)
 void fbdevice::draw_mario(uint8_t code, uint8_t size)
 {
     const uint8_t* font_ptr;
-    
     font_ptr = mario + code * MARIO_SIZE * MARIO_SIZE;
-    
     uint16_t width = MARIO_SIZE * size;
-    
     uint16_t* buffer_ptr = (uint16_t*)device_p;
     
     // Move screen ptr to top-left of character
@@ -341,15 +304,12 @@ void fbdevice::draw_mario(uint8_t code, uint8_t size)
     
     for (uint8_t y = 0; y < MARIO_SIZE; ++y)
     {
-    
         //print multiple times of the same line of pacman
         for(uint8_t k = 0; k < size; ++k)
         {
-        
           //print one line of pacman
           for (uint8_t x = 0; x < MARIO_SIZE; ++x)
           {
-          
               for(uint8_t l = 0; l < size; ++l)
               {
                   set_colour_by_code(font_ptr); 
@@ -368,18 +328,14 @@ void fbdevice::draw_mario(uint8_t code, uint8_t size)
           // move to the next line for drawing
           buffer_ptr -= width;
           buffer_ptr += vinfo.xres;
-        
         }
-    
     }
-    
 }
 
 // paint the a rectangle
 // mode 1 is solid colour, mode 2 is just line
 void fbdevice::draw_rectangle(uint16_t x_tmp, uint16_t y_tmp, uint16_t w_tmp, uint16_t h_tmp, uint8_t mode)
 {
-    
     if(1 == mode)
     {
         for(uint16_t x = x_tmp; x < x_tmp + w_tmp; ++x)
@@ -405,12 +361,10 @@ void fbdevice::draw_rectangle(uint16_t x_tmp, uint16_t y_tmp, uint16_t w_tmp, ui
             draw_pixel(x_tmp + w_tmp, y);
         }
     }
-    
 }
 
 string fbdevice::flash_sec(uint32_t sec)
 {
-    
     if( seconds != sec)
     {
         set_colour( rand()%256, rand()%256, rand()%256);
@@ -422,16 +376,16 @@ string fbdevice::flash_sec(uint32_t sec)
     switch( sec%4 )
     {
       case 0 :
-    return string(1, 24);
+        return string(1, 24);
       case 1 :
-    return string(1, 26);
+        return string(1, 26);
       case 2 :
-    return string(1, 25);
+        return string(1, 25);
       case 3 :
-    return string(1, 27);
+        return string(1, 27);
     
       default :
-    return string(1, 0);
+        return string(1, 0);
     }
 }
 
@@ -498,7 +452,6 @@ void fbdevice::fill_text(string tmp, uint8_t mode)
     {
         for(int i = 0; i < text_num; ++i)
         {
-        
             if( 0 != rand()%5)
             {
                 set_colour(255,0,0);
@@ -514,12 +467,9 @@ void fbdevice::fill_text(string tmp, uint8_t mode)
                 
                 // move to the next line if current line full
                 if( index_x > ( vinfo.xres - 32 ) )  { set_index( 0, index_y + 32); }
-            
             }
-        
         }
     }
-    
     
     // fill the text area with the string provided as much as possible
     else
@@ -531,7 +481,6 @@ void fbdevice::fill_text(string tmp, uint8_t mode)
         
         display_str( tmp, 4, 8);
     }
-    
 }
 
 // display text on the screen below the clock area
@@ -560,7 +509,6 @@ void fbdevice::fill_mario(uint8_t code, uint8_t mode)
             
             // move to the next line if current line full
             if( index_x > ( vinfo.xres - 32 ) )  { set_index( 0, index_y + 32); } 
-        
         }
     }
     
@@ -576,10 +524,8 @@ void fbdevice::fill_mario(uint8_t code, uint8_t mode)
             
             // move to the next line if current line full
             if( index_x > ( vinfo.xres - 32 ) )  { set_index( 0, index_y + 32); }
-        
         }
     }
-    
 }
 
 void fbdevice::random_rectangle()
@@ -616,21 +562,17 @@ void fbdevice::refresh(uint8_t mode)
 // this method draws the pac man animation
 void fbdevice::pacman_eat_line(uint16_t line, uint8_t mode)
 {
-    
     if( 0 == (line/PACMAN_SIZE)%2 )
     {
         set_index( 0, line );
         
         for(uint16_t i = 0; i < vinfo.xres-PACMAN_SIZE; ++i)
         {
-         
             if( (i%6)<3 ) { draw_pacman(0, 1); }
             else { draw_pacman(1, 1); }
             
             usleep(40000);
-            
             refresh(mode);
-            
             set_index(i, line);
         }
     }
@@ -641,43 +583,32 @@ void fbdevice::pacman_eat_line(uint16_t line, uint8_t mode)
         
         for(uint16_t i = vinfo.xres - PACMAN_SIZE; i > 0 ; --i)
         {
-        
             if( (i%6)<3 ) { draw_pacman(2, 1); }
             else { draw_pacman(3, 1); }
             
             usleep(40000);
-            
             refresh(mode);
-            
             set_index(i, line);
         }
     }
 }
 
-
 // this method draws the mario animation
 void fbdevice::mario_eat_line(uint16_t line, uint8_t mode)
 {
-    
     if( 0 == (line/32)%2 )
     {
         set_index( 0, line );
         
         for(uint16_t i = 0; i < vinfo.xres-32; ++i)
         {
-        
             if( (i%12)<3 ) { draw_mario(26, 2); }
-            
             else if( (i%12)<6 ) { draw_mario(27, 2); }
-            
             else if( (i%12)<9 ) { draw_mario(26, 2); }
-            
             else { draw_mario(28, 2); }
             
             usleep(40000);
-            
             refresh(mode);
-            
             set_index(i, line);
         }
     }
@@ -688,19 +619,13 @@ void fbdevice::mario_eat_line(uint16_t line, uint8_t mode)
         
         for(uint16_t i = vinfo.xres - 32; i > 0 ; --i)
         {
-            
             if( (i%12)<3 ) { draw_mario(29, 2); }
-            
             else if( (i%12)<6 ) { draw_mario(30, 2); }
-            
             else if( (i%12)<9 ) { draw_mario(29, 2); }
-            
             else { draw_mario(31, 2); }
             
             usleep(40000);
-            
             refresh(mode);
-            
             set_index(i, line);
         }
     }
@@ -718,22 +643,16 @@ void fbdevice::draw_main(uint8_t mode, uint8_t select)
     
     while(true)
     { 
-    
         if( 1 == select ) { pacman_eat_line(line_index, mode); }
         else if ( 2 == select ) { mario_eat_line(line_index, mode); }
         
         display_str( " ", 4, 8);
-        
         line_index += 32;
         
         if(line_index > 208)
         {
             line_index = 12 * mode;
-            
             fill_text("random", mode);
         }
-    
     }
 }
-
-

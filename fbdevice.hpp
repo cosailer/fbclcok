@@ -158,10 +158,6 @@ class fbdevice
     // use select to select which animation to show
     // 1 for pacman, 2 for super mario
     void draw_main(uint8_t mode, uint8_t select);
-    
-    
 };
 
 #endif
-
-

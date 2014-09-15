@@ -16,7 +16,6 @@
  */
 
 #include "fbdevice.hpp"
-
 #include <iostream>
 #include <exception>
 #include <cstdlib>
@@ -25,10 +24,8 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    
     uint8_t mode = 8;
     uint8_t select = 1;
-    
     fbdevice framebuffer;
     
     try
@@ -41,7 +38,6 @@ int main(int argc, char* argv[])
         
         // set mode
         if( *argv[1] == '1' ) { mode = 8; }
-    
         else if( *argv[1] == '2' ) { mode = 16; }
         
         else
@@ -78,7 +74,4 @@ int main(int argc, char* argv[])
     }
     
     return 0;
-  
 }
-
-
