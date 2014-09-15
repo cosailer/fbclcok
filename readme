@@ -1,0 +1,54 @@
+>> Copyright (C) 2014 by cosailer <cosailer@gmail.com>
+
+>> Intro
+
+   v1.00
+   clock, small clock program that runs on the framebuffer device
+   (eg, fb0) under linux. It can show time, date and some animation
+   like pacman and mario. Optimized to run with resolution 320x240,
+   with is perfect for the digital photo frame DF3120. For more 
+   information on DF3120, please use google. 
+________________________________________________________________
+
+>> Table of contents
+   
+   // modify this to compile the code
+   makefile
+
+   // reference code, to check how the letter looks like
+   ascii_code
+   
+   // main source code
+   clock.cpp
+   fbdevice.hpp
+   fbdevice.cpp
+   
+   // to change fonts, read fbdevice.hpp
+   // 8x8 font files
+   vincent.hpp
+   font_8x8.hpp
+   font_acorn_8x8.hpp
+   font_pearl_8x8.hpp
+   
+   // 8x16 font files
+   font_8x16.hpp
+   font_sun8x16.hpp
+   
+   // custom animation files
+   pacman_32x32.hpp
+   super_mario_16x16.hpp 
+
+________________________________________________________________
+
+>> Compile notes
+   
+   If you have already build minifs toolchain for DF3120, then change
+   the compiler in makefile to arm-v4t-linux-uclibcgnueabi-g++, then
+   you are set.
+   
+   If you don't have a minifs toolchain, use arm-linux-gnueabi-g++ 
+   instead, and compile with -static. You can install arm-linux-gnueabi-g++
+   under ubuntu with 'sudo apt-get insatll g++-arm-linux-gnueabi'
+   
+   For more information on setting up minifs toolchain, please use google.
+   
